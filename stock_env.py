@@ -1,7 +1,7 @@
 import pandas as pd
 
 class StockEnv():
-	def __init__(self,data):
+	def __init__(self, data):
 		self.action_space = ['b','s','n']
 		self.n_actions = len(self.action_space)
 		self.data = data
@@ -11,17 +11,17 @@ class StockEnv():
 
 	def reset(self):
 		data = self.data[self.step]
-		self.hold =0
-		self.cash =0
-		return data 
+		self.hold = 0
+		self.cash = 0
+		return data
 
-	def gostep(self,action): 
+	def gostep(self,action):
 		cash = self.cash
 		hold = self.hold
 		self.step +=1
 		s = self.data[self.step-1]
 		oldPrice =s[0]
-		
+
 		if action == 0: # buy
 			self.hold+=1
 			self.cash-= oldPrice
@@ -39,7 +39,7 @@ class StockEnv():
 		new_pro = s_[0]*self.hold+self.cash
 		old_pro = oldPrice*hold+cash
 		reward = new_pro-old_pro
-		return s_,reward,done
+		return s_, reward, done
 
 # df = pd.read_csv('./data.csv')
 # env = StockEnv(df)
@@ -48,4 +48,3 @@ class StockEnv():
 # s2,reward,done = env.gostep(1)
 # print reward
 # #print done
-

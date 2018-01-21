@@ -1,4 +1,4 @@
-import pandas as pd 
+import pandas as pd
 
 
 def  getDayDf(path):
@@ -7,7 +7,7 @@ def  getDayDf(path):
 
 def getMinDf(path):
 	df = pd.read_csv(path,usecols=['year','mon','day','time','close','volume'])
-	return df 
+	return df
 
 def normalDayDf(df):
 	first = df.loc[0,]
@@ -16,7 +16,13 @@ def normalDayDf(df):
 	new_df['volume'] = new_df['volume'] /first['volume']
 	return new_df
 
-def getFitures(index,min_df,day_df):
+# DIG FOR LAST 10 DAYS OF Data
+# DIG FOR LAST 10 5mins of data
+# Create a 40 element list of Fixtures
+# first 20 elements are min_close, min_volume
+# second 20 elements are day_close, day_volume
+
+def getFitures(index, min_df, day_df):
 	if index>= 9:
 		fiture = dict()
 		i=9
@@ -27,8 +33,8 @@ def getFitures(index,min_df,day_df):
 	   		fiture[col_close] = data_min['close']
 	   		fiture[col_volume] = data_min['volume']
 	   		i-=1
-		year ,mon,day= min_df.loc[index,'year'],min_df.loc[index,'mon'],min_df.loc[index,'day']
-		time = int(day+100*mon+10000*year)
+		year, mon, day = min_df.loc[index,'year'],min_df.loc[index,'mon'],min_df.loc[index,'day']
+		time = int(day + 100*mon + 10000*year)
 		end =list(day_df['time']).index(time)
 		start = end -10
 		for i in range(0,10):
@@ -39,35 +45,34 @@ def getFitures(index,min_df,day_df):
 	   		fiture[col_volume] = data_day['volume']
 		return fiture
 
-def create_data(min_df,day_df):
+def create_data(min_df, day_df):
 	cols =[]
 	for i in range(0,10):
 		cols.append('close_min{}'.format(i))
 		cols.append('volume_min{}'.format(i))
 	for i in range(0,10):
 		cols.append('close_day{}'.format(i))
-		cols.append('volume_day{}'.format(i))	
+		cols.append('volume_day{}'.format(i))
 	df  = pd.DataFrame(columns=cols)
 	for index in min_df.index:
-		if index>8:  
+		if index>8:
 			data = getFitures(index,min_df,day_df)
 			df.loc[index]=data
-	return df 
-    
+	return df
 
 
 
-day_df = getDayDf('./sz000001_day.csv')
-min_df = getMinDf('./sz000001_min.csv')
 
-normal_day = normalDayDf(day_df)
-normal_min = normalDayDf(min_df)
+#day_df = getDayDf('./sz000001_day.csv')
+#min_df = getMinDf('./sz000001_min.csv')
+
+#normal_day = normalDayDf(day_df)
+#normal_min = normalDayDf(min_df)
 #print normal_day.head(n=10)
 #print normal_min.head(n=10)
 #feature = getFitures(9,normal_min,normal_day)
 #print normal_day.index
 #print normal_min.index
-df = create_data(normal_min,normal_day)
-df.to_csv('./data.csv',index=False)
-print df.head()
-
+#df = create_data(normal_min,normal_day)
+#df.to_csv('./data.csv',index=False)
+#print df.head()
